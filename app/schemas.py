@@ -5,7 +5,7 @@ from datetime import datetime
 
 class UserCreate(BaseModel):
     username:str
-    email:str
+    email:EmailStr
     password:str
     confirm_password:str
 

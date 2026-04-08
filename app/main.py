@@ -1,9 +1,10 @@
 from fastapi import FastAPI, Depends, HTTPException, status
-from app.schemas import UserCreate
+from app.schemas import UserCreate, UserLogin
 from app.database import Base, engine, SessionLocal
 from app.models import User
 from sqlalchemy.orm import Session
 from app.utils import hash_password, verify_password
+from app.auth import create_access_token, verify_access_token
 
 
 app = FastAPI()
@@ -39,4 +40,20 @@ def create_user(user: UserCreate, db:Session = Depends(get_db)):
     
     return {"msg": "User registered successfully"}
 
+
+@app.post("/api/login")
+def user_login(user: UserLogin, db:Session = Depends(get_db)):
     
+    # check if user exists
+    is_user_exists = db.query(User).filter(User.email == user.email).first()
+    if not is_user_exists:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid credentials")
+    
+    if not verify_password(user.password, is_user_exists.hashed_password):
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid credentials")
+    
+    # create JWT token
+    token_data = {"user_id":is_user_exists.id, "username":is_user_exists.username, "email":is_user_exists.email}
+    access_token = create_access_token(token_data)
+    
+    return {"access_token":access_token, "token_type":"Bearer"}
