@@ -41,3 +41,10 @@ class SingleTaskResponse(BaseModel):
 class TaskListResponse(BaseModel):
     success:bool
     data:List[TaskResponse]
+
+
+class UserLogin(BaseModel):
+    email: EmailStr
+    password: str
+
+
