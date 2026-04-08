@@ -23,7 +23,7 @@ def get_db():
 
 
 
-@app.post("/api/register")
+@app.post("/api/register", status_code=status.HTTP_201_CREATED)
 def create_user(user: UserCreate, db:Session = Depends(get_db)):
      
     existing_user = db.query(User).filter(User.email == user.email).first() 
