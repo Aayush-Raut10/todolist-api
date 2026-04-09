@@ -25,7 +25,7 @@ def verify_access_token(jwt_token:str):
 
     try:
       payload = jwt.decode(token=jwt_token, key=SECRET_KEY, algorithms=[ALGORITHM])
-      print(payload)
+     
       print(type(payload))
       return payload
 
