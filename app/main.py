@@ -33,7 +33,7 @@ def create_user(user: UserCreate, db:Session = Depends(get_db)):
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="User already registered with this email")
     
     password = hash_password(user.password)
-    new_user = User(username=user.username, email=user.email, hashed_password=password, role=user.role)
+    new_user = User(username=user.username, email=user.email, hashed_password=password)
 
     db.add(new_user)
     db.commit()
@@ -90,15 +90,12 @@ def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(securit
 
 
 def role_checker(user:User = Depends(get_current_user)):
-        if user.role  not in ["admin", "ADMIN", "Admin"]:
+        if user.role.lower() != "admin":
            raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Access denied")
 
         return user
     
     
-
-
-
 @app.get("/api/admin")
 def admin_page(user:User = Depends(role_checker)):
     return {"message":f"Welcome to the Admin page {user.username}"}

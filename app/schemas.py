@@ -8,7 +8,7 @@ class UserCreate(BaseModel):
     email:EmailStr
     password:str
     confirm_password:str
-    role:str
+
 
     # validator to check if password match
     @field_validator("confirm_password")
