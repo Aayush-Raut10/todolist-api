@@ -8,6 +8,7 @@ class UserCreate(BaseModel):
     email:EmailStr
     password:str
     confirm_password:str
+    role:str
 
     # validator to check if password match
     @field_validator("confirm_password")
@@ -15,7 +16,6 @@ class UserCreate(BaseModel):
         if "password" in values.data and v != values.data["password"]:
             raise ValueError("Passwords do not match")
         return v
-
 
 
 class TaskCreate(BaseModel):

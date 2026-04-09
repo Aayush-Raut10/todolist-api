@@ -33,7 +33,7 @@ def create_user(user: UserCreate, db:Session = Depends(get_db)):
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="User already registered with this email")
     
     password = hash_password(user.password)
-    new_user = User(username=user.username, email=user.email, hashed_password=password)
+    new_user = User(username=user.username, email=user.email, hashed_password=password, role=user.role)
 
     db.add(new_user)
     db.commit()
@@ -54,7 +54,13 @@ def user_login(user: UserLogin, db:Session = Depends(get_db)):
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid credentials")
     
     # create JWT token
-    token_data = {"user_id":is_user_exists.id, "username":is_user_exists.username, "email":is_user_exists.email}
+    token_data = {
+        "user_id":is_user_exists.id, 
+        "username":is_user_exists.username, 
+        "email":is_user_exists.email,
+        "role":is_user_exists.role
+
+        }
     access_token = create_access_token(token_data)
     
     return {"access_token":access_token, "token_type":"Bearer"}
@@ -81,6 +87,21 @@ def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(securit
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="User not found")
     
     return current_user
+
+
+def role_checker(user:User = Depends(get_current_user)):
+        if user.role  not in ["admin", "ADMIN", "Admin"]:
+           raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Access denied")
+
+        return user
+    
+    
+
+
+
+@app.get("/api/admin")
+def admin_page(user:User = Depends(role_checker)):
+    return {"message":f"Welcome to the Admin page {user.username}"}
 
 
 @app.get("/api/dashboard")
