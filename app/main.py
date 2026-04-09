@@ -1,7 +1,7 @@
 from fastapi import FastAPI, Depends, HTTPException, status
-from app.schemas import UserCreate, UserLogin
+from app.schemas import UserCreate, UserLogin, TaskCreate, SingleTaskResponse, TaskListResponse
 from app.database import Base, engine, SessionLocal
-from app.models import User
+from app.models import User, Task
 from sqlalchemy.orm import Session
 from app.utils import hash_password, verify_password
 from app.auth import create_access_token, verify_access_token
@@ -101,7 +101,63 @@ def admin_page(user:User = Depends(role_checker)):
     return {"message":f"Welcome to the Admin page {user.username}"}
 
 
+
+
+@app.post("/api/tasks")
+def create_task(task: TaskCreate, user: User = Depends(get_current_user), db: Session = Depends(get_db)):
+
+    new_task = Task(
+        title=task.title, 
+        description=task.description,
+        user_id = user.id,
+        is_completed = task.is_completed
+        )
+    
+    db.add(new_task)
+    db.commit()
+    db.refresh(new_task)
+
+    return new_task
+
+
+
 @app.get("/api/dashboard")
-def dashboard(user:User = Depends(get_current_user)):
- 
-        return {"message": f"Hi {user.username}, Welcome to the Todo List Web app!"}
+def dashboard(user:User = Depends(get_current_user), db:Session = Depends(get_db)):
+        
+        # Fetch user tasks
+        tasks = db.query(Task).filter(Task.user_id == user.id).all()
+
+        # prepare statistics
+        total_tasks = len(tasks)
+        completed_task = sum(1 for task in tasks if task.is_completed)
+        pending_tasks = total_tasks - completed_task
+
+        
+        return {
+            "user":{
+                "id":user.id,
+                "username":user.username,
+                "email":user.email,
+                "role":user.role
+            }, 
+
+            "tasks":[
+                
+                {
+
+                    "id": t.id,
+                    "title": t.title,
+                    "description": t.description,
+                    "is_completed": t.is_completed,
+                    "created_at": t.created_at,
+                    "updated_at": t.updated_at
+
+            }   for t in tasks
+            ],
+        
+            "stats":{
+                "total_tasks":total_tasks,
+                "completed_tasks":completed_task,
+                "pending_tasks":pending_tasks
+            }
+        }
