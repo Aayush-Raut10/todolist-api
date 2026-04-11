@@ -6,9 +6,28 @@ from sqlalchemy.orm import Session
 from app.utils import hash_password, verify_password
 from app.auth import create_access_token, verify_access_token
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
+from fastapi.middleware.cors import CORSMiddleware
+
 
 
 app = FastAPI()
+
+
+
+origins = [
+
+    "http://127.0.0.1:5500",
+    "http://localhost:3000"
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 
 
 # Create all tables
@@ -161,3 +180,16 @@ def dashboard(user:User = Depends(get_current_user), db:Session = Depends(get_db
                 "pending_tasks":pending_tasks
             }
         }
+
+@app.delete("/api/tasks/{task_id}")
+def delete_task(task_id: int, user:User = Depends(get_current_user), db:Session = Depends(get_db)):
+    
+    db_task = db.query(Task).filter(Task.id == task_id, Task.user_id == user.id).first()
+
+    if db_task is None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Task not Found")
+    
+    db.delete(db_task)
+    db.commit()
+
+    return {"status":"success", "message":"Task deleted successfully"}
