@@ -32,11 +32,16 @@ class TaskResponse(BaseModel):
     created_at: datetime
     updated_at:datetime
 
+    class Config:
+        from_attributes = True
+
 
 
 class SingleTaskResponse(BaseModel):
-    success:bool
+    status:bool 
+    message:str
     data:TaskResponse
+    
 
 class TaskListResponse(BaseModel):
     success:bool
@@ -47,4 +52,9 @@ class UserLogin(BaseModel):
     email: EmailStr
     password: str
 
+
+class TaskUpdateRequest(BaseModel):
+    title:Optional[str] = None
+    description:Optional[str] = None
+    is_completed:Optional[bool] = None
 
