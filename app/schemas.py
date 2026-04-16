@@ -58,3 +58,7 @@ class TaskUpdateRequest(BaseModel):
     description:Optional[str] = None
     is_completed:Optional[bool] = None
 
+
+class PwdResetRequest(BaseModel):
+    token:str
+    new_password:str

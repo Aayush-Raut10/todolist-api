@@ -36,3 +36,15 @@ class Task(Base):
 
     # Relationship
     owner = relationship("User", back_populates="tasks") # owner → lets you access task.owner.username, task.owner.email, etc.
+
+
+
+
+class PasswordReset(Base):
+    __tablename__ = "password_resets"
+
+    id = Column(Integer, primary_key=True, index=True)
+    token_hash = Column(String, unique=True, index=True)
+    expires_at = Column(DateTime, nullable=False)
+
+    user_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
