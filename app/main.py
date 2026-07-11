@@ -12,8 +12,9 @@ app.include_router(tasks.router)
 
 
 origins = [
+
+    "https://todolist-frontend-dun.vercel.app",
     
-    "https://todolist-frontend-dun.vercel.app/"
 ]
 
 app.add_middleware(
