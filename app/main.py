@@ -12,9 +12,8 @@ app.include_router(tasks.router)
 
 
 origins = [
-
-    "https://todolist-api-08rd.onrender.com",
-    "https://todolist-api-08rd.onrender.com/"
+    
+    "https://todolist-frontend-dun.vercel.app/"
 ]
 
 app.add_middleware(
