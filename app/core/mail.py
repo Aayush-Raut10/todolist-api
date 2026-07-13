@@ -12,7 +12,7 @@ configuration = ConnectionConfig(
     MAIL_FROM = os.getenv("MAIL_FROM"),
     
     MAIL_SERVER = "smtp.gmail.com",
-    MAIL_PORT = 587,
+    MAIL_PORT = 465,
 
     MAIL_STARTTLS = True,
     MAIL_SSL_TLS = False,
