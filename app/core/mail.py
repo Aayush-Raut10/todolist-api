@@ -16,7 +16,7 @@ configuration = ConnectionConfig(
 
     MAIL_STARTTLS = True,
     MAIL_SSL_TLS = False,
-    
+
      USE_CREDENTIALS=True,
     VALIDATE_CERTS=True,
 
@@ -46,6 +46,22 @@ async def send_email(recipient:str, subject:str, body:str):
     # Try sending the mail
     try:
         print(f"sending email to {recipient}...")
+        import socket
+
+        try:
+            ip = socket.gethostbyname("smtp.gmail.com")
+            print("Resolved:", ip)
+        except Exception as e:
+            print("DNS failed:", e)
+
+            import socket
+
+        try:
+            s = socket.create_connection(("smtp.gmail.com", 587), timeout=10)
+            print("TCP connection successful")
+            s.close()
+        except Exception as e:
+            print("TCP failed:", repr(e))
         await fm.send_message(message=message)
         print("Email sent successfully!")
 
