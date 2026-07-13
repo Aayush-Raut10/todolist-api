@@ -4,7 +4,7 @@ from app.routes import auth, dashboard, tasks
 from fastapi.middleware.cors import CORSMiddleware
 
 
-app = FastAPI()
+app = FastAPI(title="Task Management API")
 
 app.include_router(auth.router)
 app.include_router(dashboard.router)
