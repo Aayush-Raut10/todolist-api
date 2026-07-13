@@ -17,7 +17,7 @@ async def send_email(recipient: str, subject: str, body: str):
 
         response = resend.Emails.send(
             {
-                "from": "dolindrabahadurraut@gmail.com",
+                "from": "noreply@dolindrabahadurraut.com.np",
                 "to": recipient,
                 "subject": subject,
                 "html": body,
