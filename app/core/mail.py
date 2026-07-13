@@ -56,12 +56,18 @@ async def send_email(recipient:str, subject:str, body:str):
 
             import socket
 
-        try:
-            s = socket.create_connection(("smtp.gmail.com", 587), timeout=10)
-            print("TCP connection successful")
-            s.close()
-        except Exception as e:
-            print("TCP failed:", repr(e))
+        import socket
+
+        for host, port in [
+            ("google.com", 443),
+            ("api.github.com", 443),
+            ("smtp.gmail.com", 587),
+        ]:
+            try:
+                socket.create_connection((host, port), timeout=10)
+                print(f"{host}:{port} -> OK")
+            except Exception as e:
+                print(f"{host}:{port} -> {repr(e)}")
         await fm.send_message(message=message)
         print("Email sent successfully!")
 
