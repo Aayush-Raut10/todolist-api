@@ -84,7 +84,7 @@ async def forgot_password(request:dict, background_tasks:BackgroundTasks, db:Ses
     db.commit()
     
     # Send this via email in real app
-    reset_url = f"http://127.0.0.1:5500/?token={raw_token}"
+    reset_url = f"https://todolist-frontend-dun.vercel.app/?token={raw_token}"
     
     html_content = f'<h1>Password Reset <h1> <p>click for reset <a href="{reset_url}">Reset Password</a></p>'
 
